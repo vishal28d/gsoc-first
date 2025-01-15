@@ -1,3 +1,4 @@
+
 import 'package:dartssh2/dartssh2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,13 +17,12 @@ class SSHController {
   SSHController._internal();
 
   RxBool isConnected = false.obs;
-  RxString ip = '192.168.56.10'.obs;
+  RxString ip = '192.168.56.101'.obs;
   RxString username = 'lg'.obs;
   RxString password = 'lg'.obs;
   RxInt port = 22.obs;
   RxInt rigs = 3.obs;
-
-  SSHClient? _client;
+  SSHClient? client;
 
   // Snackbar utility
   void showSnackBar({
@@ -44,24 +44,26 @@ class SSHController {
   }
 
   // Connect to the SSH server
-  Future<bool?> connectToLG(BuildContext context) async {
+  Future<bool?> connectToLG() async {
     try {
       final socket = await SSHSocket.connect(
         ip.value,
         port.value,
-        timeout: const Duration(seconds: 5),
+        timeout: const Duration(seconds: 3),
       );
-      _client = SSHClient(
+      client = SSHClient(
         socket,
         username: username.value,
         onPasswordRequest: () => password.value,
       );
-      isConnected.value = true;
+
+     isConnected.value = true;
+
       return true;
     } catch (e) {
       isConnected.value = false;
       print('Failed to connect: $e');
-      showSnackBar(context: context, message: e.toString(), color: Colors.red);
+      Get.rawSnackbar(message: e.toString(),);
       return false;
     }
   }
@@ -70,7 +72,7 @@ class SSHController {
   Future<void> closeConnection() async {
     if (isConnected.value) {
       try {
-        _client?.close();
+        client?.close();
         isConnected.value = false;
         print("SSH connection closed.");
       } catch (e) {
@@ -84,7 +86,7 @@ class SSHController {
   Future shutdownLG() async {
     try {
       for (var i = int.parse(rigs.value.toString()); i >= 1; i--) {
-        await _client!.execute(
+        await client!.execute(
             'sshpass -p $password ssh -t lg$i "echo $password | sudo -S poweroff"');
       }
     } catch (e) {
@@ -110,13 +112,14 @@ class SSHController {
   // Execute a command
   Future<SSHSession?> executeCommand(String command) async {
     try {
-      if (_client == null) {
+      if (client == null) {
         print('SSH client is not initialized.');
         return null;
       }
-      await _client!.execute(command);
-      print('command executing');
+      print(command.toString());
+      await client!.execute(command);
     } catch (e) {
+      print('command executing222');
       print('An error occurred while executing the command: $e');
       return null;
     }

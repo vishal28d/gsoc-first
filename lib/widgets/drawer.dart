@@ -1,6 +1,6 @@
 import 'package:first/Pages/LG-extra/LG_extra_commands.dart';
 import 'package:first/Planets/Earth.dart';
-import 'package:first/myhomepage.dart';
+import 'package:first/Pages/myhomepage.dart';
 import 'package:first/Pages/settings.dart';
 import 'package:first/ssh.dart';
 import 'package:flutter/material.dart';
@@ -62,14 +62,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
              leading:  Image.asset('assets/earth.png' , height: 30, width: 30,),
             title: const Text('Earth'),
             onTap: () {
-            Get.to(const EarthPage());
+            Get.to( EarthPage());
             },
           ),
           ListTile(
             leading:  Image.asset('assets/earth.png' , height: 30, width: 30,),
             title: const Text('Extra Commands'),
             onTap: () {
-            Get.to( LgExtraCommands());
+            Get.to( const LgExtraCommands());
             },
           ),
 

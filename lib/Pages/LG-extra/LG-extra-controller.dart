@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dartssh2/dartssh2.dart';
+import 'package:first/KML/kml.dart';
+import 'package:first/services/lg_service.dart';
 import 'package:first/ssh.dart';
 import 'package:first/widgets/drawer.dart';
 import 'package:get/get.dart';
@@ -19,11 +21,12 @@ class Lg_extra_controller {
   Future<void> initConnectionDetails() async {
     SSHController sshController = Get.find<SSHController>();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    _host = prefs.getString('ipAddress') ?? sshController.ip.value ;
-    _port = prefs.getString('sshPort') ?? ssh.port.value.toString() ;
-    _username = prefs.getString('username') ?? ssh.username.value   ;
-    _passwordOrKey = prefs.getString('password') ?? ssh.password.value ;
-    _numberOfRigs = prefs.getString('numberOfRigs') ?? ssh.rigs.value.toString() ;
+    _host = prefs.getString('ipAddress') ?? sshController.ip.value;
+    _port = prefs.getString('sshPort') ?? ssh.port.value.toString();
+    _username = prefs.getString('username') ?? ssh.username.value;
+    _passwordOrKey = prefs.getString('password') ?? ssh.password.value;
+    _numberOfRigs =
+        prefs.getString('numberOfRigs') ?? ssh.rigs.value.toString();
   }
 
   Future<bool?> connectToLG() async {
@@ -95,7 +98,11 @@ class Lg_extra_controller {
   cleanVisualization() async {
     try {
       connectToLG();
-      await _client!.execute('echo "" > /var/www/html/kmls.txt');
+      await LGService().sendKML('cleankml','''<?xml version="1.0" encoding="UTF-8"?>
+      <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+        <Document>
+        </Document>
+      </kml>''' , '');
     } catch (e) {
       print('Could not connect to host LG');
       return Future.error(e);
@@ -165,107 +172,21 @@ class Lg_extra_controller {
   <Document>
   </Document>
 </kml>''';
-    int rigs = (int.parse(_numberOfRigs) / 2).floor() + 1;
-    int leftRig = (int.parse(_numberOfRigs) / 2).floor() + 2;
+    int rigs = (3 / 2).floor() + 1;
+    int leftRig = (3 / 2).floor() + 2;
     try {
       connectToLG();
       await _client!
           .execute("echo '$blank' > /var/www/html/kml/slave_$rigs.kml");
-      return await _client!
-          .execute("echo '$blank' > /var/www/html/kml/slave_$leftRig.kml");
+       await ssh
+          .executeCommand("echo '$blank' > /var/www/html/kml/slave_$leftRig.kml");
+       await ssh
+          .executeCommand("echo '$blank' > /var/www/html/kml/master_1.kml");
+
     } catch (e) {
       return Future.error(e);
     }
   }
-
-  Future cleanRightBalloon() async {
-    String blank = '''
-<?xml version="1.0" encoding="UTF-8"?>
-<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
-  <Document>
-  </Document>
-</kml>''';
-
-    int rightRig = (int.parse(_numberOfRigs) / 2).floor() + 1;
-    try {
-      connectToLG();
-
-      return await _client!
-          .execute("echo '$blank' > /var/www/html/kml/slave_$rightRig.kml");
-    } catch (e) {
-      return Future.error(e);
-    }
-  }
-
-  logosLG(String imageUrl, double factor) async {
-    int leftRig = (int.parse(_numberOfRigs) / 2).floor() + 2;
-    String kml = '''<?xml version="1.0" encoding="UTF-8"?>
-<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
-    <Document id ="logo">
-         <name>Smart City Dashboard</name>
-             <Folder>
-                  <name>Splash Screen</name>
-                  <ScreenOverlay>
-                      <name>Logo</name>
-                      <Icon><href>$imageUrl</href> </Icon>
-                      <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
-                      <screenXY x="0" y="1" xunits="fraction" yunits="fraction"/>
-                      <rotationXY x="0" y="0" xunits="fraction" yunits="fraction"/>
-                      <size x="900" y="${900 * factor}" xunits="pixels" yunits="pixels"/>
-                  </ScreenOverlay>
-             </Folder>
-    </Document>
-</kml>''';
-    try {
-      connectToLG();
-      return await _client!
-          .execute("echo '$kml' > /var/www/html/kml/slave_$leftRig.kml");
-    } catch (e) {
-      return Future.error(e);
-    }
-  }
-
-  // Future<String> get _localPath async {
-  //   final directory = await getApplicationDocumentsDirectory();
-  //   return directory.path;
-  // }
-
-  // buildOrbit(String content, String filename) async {
-  //   String localPath = await _localPath;
-  //   File localFile = File('$localPath/$filename.kml');
-  //   print('$localPath/$filename.kml');
-  //   localFile.writeAsString(content);
-
-  //   try {
-  //     connectToLG();
-  //     await _client!.execute("echo '$content' > /var/www/html/$filename.kml");
-  //     print("content added");
-  //     await _client!.execute(
-  //         "echo '\nhttp://lg1:81/$filename.kml' >> /var/www/html/kmls.txt");
-  //     print("kml added");
-
-  //     // await startOrbit();
-  //   } catch (e) {
-  //     print('Error in building orbit');
-  //     return Future.error(e);
-  //   }
-  // }
-
-  // buildKML(String content) async {
-  //   String localPath = await _localPath;
-  //   File localFile = File('$localPath/data.kml');
-  //   localFile.writeAsString(content);
-  //   try {
-  //     connectToLG();
-  //     await _client!.run('echo "" > /tmp/query.txt');
-  //     await _client!.run("echo '$content' > /var/www/html/data.kml");
-  //     await _client!
-  //         .execute("echo '\nhttp://lg1:81/data.kml' >> /var/www/html/kmls.txt");
-  //   } catch (e) {
-  //     print('Error in building orbit');
-  //     return Future.error(e);
-  //   }
-  // }
 
   startOrbit() async {
     try {
@@ -311,122 +232,63 @@ class Lg_extra_controller {
     }
   }
 
-  Future<void> sendStaticBalloon(String name, String placeName, String cityName,
-      int height, String description, String imageURL) async {
-    int rigs = (int.parse(_numberOfRigs) / 2).floor() + 1;
-    String sentence =
-        "chmod 777 /var/www/html/kml/slave_$rigs.kml; echo '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n  <Document>\n    <name>historic.kml</name>\n    <ScreenOverlay>\n      <name><![CDATA[<div style=\"text-align: center; font-size: 40px; font-weight: bold; vertical-align: middle;\">$cityName</div>]]></name>\n      <description>\n        <![CDATA[\n        <div style=\"width: 560px; padding: 20px; font-family: Arial, sans-serif; background-color: #15151a; border: 2px solid #cccccc; border-radius: 20px;\">\n          <img src=\"$imageURL\" alt=\"picture\" width=\"500\" height=\"500\" style=\" display:block; margin-left: 20px; margin-top: 20px; margin-bottom: 20px; border-radius: 20px;\"/>\n          <h1 style=\"margin: 0; font-size: 36px; color: white; text-align: center;\">$placeName</h1>\n          <div style=\"background-color: #2E2E2E; color: white; padding: 20px; margin-top: 20px; border-radius: 20px; text-align: center;\">\n            <p style=\"font-size: 28px; margin: 0;\">$description</p>\n          </div>\n        </div>\n        ]]>\n      </description>\n      <overlayXY x=\"1\" y=\"0.5\" xunits=\"fraction\" yunits=\"fraction\"/>\n      <screenXY x=\"1\" y=\"0.5\" xunits=\"fraction\" yunits=\"fraction\"/>\n      <rotationXY x=\"0\" y=\"0\" xunits=\"fraction\" yunits=\"fraction\"/>\n      <size x=\"0\" y=\"0\" xunits=\"fraction\" yunits=\"fraction\"/>\n      <gx:balloonVisibility>1</gx:balloonVisibility>\n    </ScreenOverlay>\n  </Document>\n</kml>\n' > /var/www/html/kml/slave_$rigs.kml";
-    try {
-      connectToLG();
-      await _client!.execute(sentence);
-    } catch (e) {
-      print("checked");
-
-      return Future.error(e);
-    }
-  }
-
-  sendKMLFile(File inputFile, String kmlName) async {
-    try {
-      bool uploading = true;
-      final sftp = await _client?.sftp();
-      final file = await sftp?.open('/var/www/html/$kmlName.kml',
-          mode: SftpFileOpenMode.create |
-              SftpFileOpenMode.truncate |
-              SftpFileOpenMode.write);
-      var fileSize = await inputFile.length();
-      print(fileSize);
-      file?.write(inputFile.openRead().cast(), onProgress: (progress) {
-        if (fileSize == progress) {
-          uploading = false;
-        }
-        print(progress);
-      });
-      if (file == null) {
-        return;
-      }
-      await waitWhile(() => uploading);
-    } catch (error) {}
-  }
-
-  Future waitWhile(bool Function() test,
-      [Duration pollInterval = Duration.zero]) {
-    var completer = Completer();
-    check() {
-      if (!test()) {
-        completer.complete();
-      } else {
-        Timer(pollInterval, check);
-      }
-    }
-
-    check();
-    return completer.future;
-  }
-
-  runKMLFile(String kmlName) async {
-    try {
-      print(kmlName);
-      await _client!.run('echo "" > /tmp/query.txt');
-      await _client
-          ?.run("echo 'http://lg1:81/$kmlName.kml' > /var/www/html/kmls.txt");
-    } catch (error) {
-      print(error);
-      await runKMLFile(kmlName);
-    }
-  }
-
-  openBalloon(String name, String track, String time, int height,
-      String description, double cityLat, double cityLng) async {
-    int rigs = (int.parse(_numberOfRigs) / 2).floor() + 1;
-    String openBalloonKML = '''<?xml version="1.0" encoding="UTF-8"?>
+  logosLG(String imageUrl, double factor) async {
+    String numberOfRigs = ssh.rigs.value.toString();
+    int leftRig = (int.parse(numberOfRigs) / 2).floor() + 2;
+    String kml = '''<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
-<Document>
- <name>$name.kml</name>
- <Style id="about_style">
-   <BalloonStyle>
-     <textColor>ffffffff</textColor>
-     <text>
-        <![CDATA[
-        <div style="width: 280px; padding: 10px; font-family: Arial, sans-serif;">
-          <img src="https://myapp33bucket.s3.amazonaws.com/Frame+171.png" alt="picture" width="250" height="250" style="margin-bottom: 10px;"/>
-          <h1 style="margin: 0; font-size: 18px; text-align: center;">$track</h1>
-          <h2 style="margin: 5px 0; font-size: 14px; color: #888; text-align: center;">$time</h2>
-           <div style="background-color: #2E2E2E; padding: 10px; margin-top: 10px; border-radius: 10px; text-align: center;">
-      <p style="font-size: 14px;margin: 0;">$description</p>
-    </div>
-        </div>
-        ]]>
-     </text>
-     <bgColor>ff15151a</bgColor>
-   </BalloonStyle>
- </Style>
- <Placemark id="ab">
-   <description>
-   </description>
-   <LookAt>
-     <longitude>$cityLng</longitude>
-     <latitude>$cityLat</latitude>
-     <altitude>0</altitude>
-     <heading>0</heading>
-     <tilt>0</tilt>
-     <range>24000</range>
-   </LookAt>
-   <styleUrl>#about_style</styleUrl>
-   <gx:balloonVisibility>1</gx:balloonVisibility>
-   <Point>
-    <coordinates>$cityLat,$cityLng,0</coordinates>
-   </Point>
- </Placemark>
-</Document>
-</kml>
-''';
+    <Document id ="logo">
+         <name>Smart City Dashboard</name>
+             <Folder>
+                  <name>Splash Screen</name>
+                  <ScreenOverlay>
+                      <name>Logo</name>
+                      <Icon><href>$imageUrl</href> </Icon>
+                      <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+                      <screenXY x="0.025" y="0.95" xunits="fraction" yunits="fraction"/>
+                      <rotationXY x="0" y="0" xunits="fraction" yunits="fraction"/>
+                      <size x="${900*factor}" y="${900 * factor}" xunits="pixels" yunits="pixels"/>
+                  </ScreenOverlay>
+             </Folder>
+    </Document>
+</kml>''';
     try {
-      connectToLG();
-      return await _client!.execute(
-          "echo '$openBalloonKML' > /var/www/html/kml/slave_$rigs.kml");
+      return await ssh
+          .executeCommand("echo '$kml' > /var/www/html/kml/slave_$leftRig.kml");
     } catch (e) {
       return Future.error(e);
     }
   }
+
+
+  kmlOnSlave2() async {
+    String numberOfRigs = ssh.rigs.value.toString();
+    int leftRig = (int.parse(numberOfRigs) / 2).floor() + 2;
+    String kml = Kml().newYorkKML;
+    try {
+      return await ssh
+          .executeCommand("echo '$kml' > /var/www/html/kml/slave_$leftRig.kml");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  cleanlogos() async {
+    String numberOfRigs = ssh.rigs.value.toString();
+    int leftRig = (int.parse(numberOfRigs) / 2).floor() + 2;
+    String blank = '''<?xml version="1.0" encoding="UTF-8"?>
+      <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+        <Document>
+        </Document>
+      </kml>''';
+    try {
+      return await ssh.executeCommand(
+          "echo '$blank' > /var/www/html/kml/slave_$leftRig.kml");
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+
+
 }

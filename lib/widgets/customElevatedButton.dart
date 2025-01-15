@@ -4,7 +4,7 @@ class customElevatedButton extends StatelessWidget {
   String text;
   dynamic onPress;
 
- customElevatedButton( this.text, this.onPress, {super.key});
+  customElevatedButton(this.text, this.onPress, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class customElevatedButton extends StatelessWidget {
       margin: const EdgeInsets.all(5),
       child: ElevatedButton(
         onPressed: () {
-          () =>  onPress();
+          onPress();
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF62825D),
