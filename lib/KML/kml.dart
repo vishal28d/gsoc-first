@@ -99,7 +99,7 @@ String chernobyl = '''<?xml version="1.0" encoding="UTF-8"?>
     <Style id="radiationSymbolStyle">
       <IconStyle>
         <Icon>
-          <href>https://raw.githubusercontent.com/vishal28d/gsoc-first/main/assets/J6522.png</href>
+          <href>https://raw.githubusercontent.com/vishal28d/gsoc-first/main/assets/radiation.png</href>
         </Icon>
         <scale>1.5</scale>
       </IconStyle>
