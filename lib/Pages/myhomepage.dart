@@ -53,7 +53,7 @@ class _MyhomepageState extends State<Myhomepage> {
                       ),
                       child: const Center(
                         child: Text(
-                          'Radiation Area',
+                          'Radiation Cloud',
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
@@ -87,7 +87,7 @@ class _MyhomepageState extends State<Myhomepage> {
                       ),
                       child: const Center(
                         child: Text(
-                          'Regions',
+                          'Region Map',
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,

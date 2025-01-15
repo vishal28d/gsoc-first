@@ -26,7 +26,7 @@ class ConnectionController extends GetxController {
   }
 
   Future<void> connectToLG() async {
-    bool? result = await ssh.connectToLG(Get.context!);
+    bool? result = await ssh.connectToLG();
     isConnected.value = result!;
   }
 

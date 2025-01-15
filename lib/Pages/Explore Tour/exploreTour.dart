@@ -1,3 +1,4 @@
+import 'package:first/KML/kml.dart';
 import 'package:first/Pages/Region/boundaryKML.dart';
 import 'package:first/services/lg_service.dart';
 import 'package:first/widgets/customAppBar.dart';
@@ -17,7 +18,7 @@ class Chernobyl extends StatelessWidget {
           ),
           GestureDetector(
             onTap: ()=> LGService().sendKML(
-              'Chernobyl', MajorUraniumPowerPlant , '' ,
+              'Chernobyl', chernobyl , '' ,
             ),
             child: Container(
               height: 100,

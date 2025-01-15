@@ -14,14 +14,14 @@ String himalayaBoundary = '''<?xml version="1.0" encoding="UTF-8"?>
       <styleUrl>#whiteLineStyle</styleUrl>
       <LineString>
         <coordinates>
-          <!-- Coordinates representing the border of the Himalayas (these are just sample coordinates) -->
+         
           78.5,35.5,0
           79.0,35.0,0
           79.5,34.7,0
           80.0,34.4,0
           80.5,34.2,0
           81.0,34.0,0
-          <!-- Add more coordinates as needed for the full border -->
+          
         </coordinates>
       </LineString>
     </Placemark>
@@ -31,67 +31,67 @@ String himalayaBoundary = '''<?xml version="1.0" encoding="UTF-8"?>
 String flyToHimalaya =
     '''flytoview=<LookAt><longitude>78</longitude><latitude>35</latitude><altitude>1000000</altitude><heading>0</heading><tilt>20</tilt><range>500000</range><gx:altitudeMode>relativeToGround</gx:altitudeMode></LookAt>''';
 
-String MajorUraniumPowerPlant = '''<?xml version="1.0" encoding="UTF-8"?>
-<kml xmlns="http://www.opengis.net/kml/2.2">
-  <Document>
-    <name>Chernobyl Radiation with Cloud</name>
+// String MajorUraniumPowerPlant = '''<?xml version="1.0" encoding="UTF-8"?>
+// <kml xmlns="http://www.opengis.net/kml/2.2">
+//   <Document>
+//     <name>Chernobyl Radiation with Cloud</name>
 
-    <!-- Style for Radiation Icon -->
-    <Style id="radiationIconStyle">
-      <IconStyle>
-        <Icon>
-          <href>https://pngimg.com/uploads/radiation/radiation_PNG99512.png</href>
-        </Icon>
-      </IconStyle>
-    </Style>
+//     <!-- Style for Radiation Icon -->
+//     <Style id="radiationIconStyle">
+//       <IconStyle>
+//         <Icon>
+//           <href>https://pngimg.com/uploads/radiation/radiation_PNG99512.png</href>
+//         </Icon>
+//       </IconStyle>
+//     </Style>
 
-    <!-- Style for Radiation Cloud -->
-    <Style id="cloudStyle">
-      <PolyStyle>
-        <color>7dff0000</color> <!-- Semi-transparent red color for the cloud -->
-        <fill>1</fill>
-        <outline>0</outline>
-      </PolyStyle>
-    </Style>
+//     <!-- Style for Radiation Cloud -->
+//     <Style id="cloudStyle">
+//       <PolyStyle>
+//         <color>7dff0000</color> <!-- Semi-transparent red color for the cloud -->
+//         <fill>1</fill>
+//         <outline>0</outline>
+//       </PolyStyle>
+//     </Style>
 
-    <!-- Chernobyl Location with Radiation Icon -->
-     <Placemark>
-      <name>Chernobyl</name>
-      <styleUrl>#radiationIconStyle</styleUrl>
-      <Point>
-        <coordinates>30.0444,51.2760,0</coordinates> <!-- Latitude, Longitude of Chernobyl, Ukraine -->
-      </Point>
-    </Placemark>
+//     <!-- Chernobyl Location with Radiation Icon -->
+//      <Placemark>
+//       <name>Chernobyl</name>
+//       <styleUrl>#radiationIconStyle</styleUrl>
+//       <Point>
+//         <coordinates>30.0444,51.2760,0</coordinates> <!-- Latitude, Longitude of Chernobyl, Ukraine -->
+//       </Point>
+//     </Placemark>
 
-    <!-- Radiation Cloud around Chernobyl -->
-    <Placemark>
-      <name>Radiation Cloud</name>
-      <styleUrl>#cloudStyle</styleUrl>
-      <Polygon>
-        <outerBoundaryIs>
-          <LinearRing>
-            <coordinates>
-              <!-- Coordinates for a circular region -->
-              30.0444,51.2960,0
-              30.0544,51.2920,0
-              30.0634,51.2830,0
-              30.0684,51.2760,0
-              30.0634,51.2690,0
-              30.0544,51.2600,0
-              30.0444,51.2560,0
-              30.0344,51.2600,0
-              30.0254,51.2690,0
-              30.0204,51.2760,0
-              30.0254,51.2830,0
-              30.0344,51.2920,0
-              30.0444,51.2960,0 <!-- Closing the circle -->
-            </coordinates>
-          </LinearRing>
-        </outerBoundaryIs>
-      </Polygon>
-    </Placemark>
-  </Document>
-</kml>''';
+//     <!-- Radiation Cloud around Chernobyl -->
+//     <Placemark>
+//       <name>Radiation Cloud</name>
+//       <styleUrl>#cloudStyle</styleUrl>
+//       <Polygon>
+//         <outerBoundaryIs>
+//           <LinearRing>
+//             <coordinates>
+//               <!-- Coordinates for a circular region -->
+//               30.0444,51.2960,0
+//               30.0544,51.2920,0
+//               30.0634,51.2830,0
+//               30.0684,51.2760,0
+//               30.0634,51.2690,0
+//               30.0544,51.2600,0
+//               30.0444,51.2560,0
+//               30.0344,51.2600,0
+//               30.0254,51.2690,0
+//               30.0204,51.2760,0
+//               30.0254,51.2830,0
+//               30.0344,51.2920,0
+//               30.0444,51.2960,0 <!-- Closing the circle -->
+//             </coordinates>
+//           </LinearRing>
+//         </outerBoundaryIs>
+//       </Polygon>
+//     </Placemark>
+//   </Document>
+// </kml>''';
 
 String GobiDesert_border = '''<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">

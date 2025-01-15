@@ -238,16 +238,16 @@ class Lg_extra_controller {
     String kml = '''<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
     <Document id ="logo">
-         <name>Smart City Dashboard</name>
+         <name>Lg logo</name>
              <Folder>
-                  <name>Splash Screen</name>
+                  <name>logo</name>
                   <ScreenOverlay>
                       <name>Logo</name>
                       <Icon><href>$imageUrl</href> </Icon>
                       <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
                       <screenXY x="0.025" y="0.95" xunits="fraction" yunits="fraction"/>
                       <rotationXY x="0" y="0" xunits="fraction" yunits="fraction"/>
-                      <size x="${900*factor}" y="${900 * factor}" xunits="pixels" yunits="pixels"/>
+                      <size x="${1111*factor}" y="${822 * factor}" xunits="pixels" yunits="pixels"/>
                   </ScreenOverlay>
              </Folder>
     </Document>
@@ -260,18 +260,6 @@ class Lg_extra_controller {
     }
   }
 
-
-  kmlOnSlave2() async {
-    String numberOfRigs = ssh.rigs.value.toString();
-    int leftRig = (int.parse(numberOfRigs) / 2).floor() + 2;
-    String kml = Kml().newYorkKML;
-    try {
-      return await ssh
-          .executeCommand("echo '$kml' > /var/www/html/kml/slave_$leftRig.kml");
-    } catch (e) {
-      return Future.error(e);
-    }
-  }
 
   cleanlogos() async {
     String numberOfRigs = ssh.rigs.value.toString();
