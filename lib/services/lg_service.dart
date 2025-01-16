@@ -1,8 +1,9 @@
 import 'package:dartssh2/dartssh2.dart';
+import 'package:first/KML/kml.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LGService {
- late SSHClient client;
+  late SSHClient client;
   late SSHSocket socket;
   late dynamic credencials;
   late int screenAmount;
@@ -25,8 +26,8 @@ class LGService {
 
   _getCredencials() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    String ip =  '192.168.56.101';
-    String password = 'lg' ;
+    String ip = '192.168.56.101';
+    String password = 'lg';
     String user = 'lg';
     int screen = 3;
 
@@ -109,15 +110,15 @@ class LGService {
     credencials = await _getCredencials();
     try {
       socket = await SSHSocket.connect('${credencials['ip']}', 22,
-          timeout: const Duration(seconds: 10));
+          timeout: const Duration(seconds: 5));
       client = SSHClient(socket,
           username: '${credencials['user']}',
           onPasswordRequest: () => '${credencials['pass']}');
       await client.run("echo '$kml' > /var/www/html/$fileName.kml");
-      await client
-          .run('echo "http://lg1:81/$fileName.kml" > /var/www/html/kmls.txt');
-      // await client.run("echo '$flyTo' > /tmp/query.txt");
-      client.close();
+      await client.execute(
+          'echo "http://lg1:81/$fileName.kml" > /var/www/html/kmls.txt');
+
+      return await client.execute('echo "$flyTo" > /tmp/query.txt');
     } catch (e) {
       throw Exception('ERROR ON SEND KML FILE: $e');
     }
@@ -169,8 +170,10 @@ class LGService {
   </kml>''';
     try {
       await client.run("echo '' > /var/www/html/kmls.txt");
-      await client.run("echo '$nullKML' > /var/www/html/kml/slave_$rightScreen.kml");
-      await client.run("echo '$nullKML' > /var/www/html/kml/slave_$leftScreen.kml");
+      await client
+          .run("echo '$nullKML' > /var/www/html/kml/slave_$rightScreen.kml");
+      await client
+          .run("echo '$nullKML' > /var/www/html/kml/slave_$leftScreen.kml");
       client.close();
     } catch (e) {
       throw Exception('ERROR ON CLEAN VISUALIZATION: $e');
@@ -299,5 +302,4 @@ class LGService {
     </Document>
   </kml>
 ''';
-
 }

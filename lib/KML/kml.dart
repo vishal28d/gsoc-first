@@ -81,6 +81,8 @@ String kaziranga = '''<?xml version="1.0" encoding="UTF-8"?>
 </Document>
 </kml>''';
 
+String flytoChernobyl = '''flytoview=<LookAt><longitude>30.0884</longitude><latitude>51.3693</latitude><altitude>100000</altitude><heading>0</heading><tilt>30</tilt><range>500000</range><gx:altitudeMode>relativeToGround</gx:altitudeMode></LookAt>''';
+
 String flyToKaziranga =
     '''flytoview=<LookAt><longitude>93.2945</longitude><latitude>26</latitude><altitude>100000</altitude><heading>0</heading><tilt>30</tilt><range>50000</range><gx:altitudeMode>relativeToGround</gx:altitudeMode></LookAt>''';
 

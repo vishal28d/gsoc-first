@@ -91,7 +91,7 @@ class Boundary extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () async {
-              LGService().sendKML('himalayas', himalayaBoundary, flyToHimalaya);
+              LGService().sendKML('himalayas', '', '');
             },
             child: Container(
               height: 100,
